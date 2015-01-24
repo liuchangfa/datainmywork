@@ -1,0 +1,232 @@
+ 阶段性总结：2015.01.04 ~ 2015.01.26
+------------------------------------------------------------------------------------------------------------------------------ 
+一，工作环境搭建：
+	1.安装ubuntu 14.04 
+	2.更新源 
+	3.安装编译环境 
+		1. 安装所有的套件 
+			sudo apt-get install git-core gnupg flex bison gperf build-essential zip curl zlib1g-dev libc6-dev 				lib32ncurses5-dev ia32-libs x11proto-core-dev libx11-dev lib32readline6-dev lib32z-dev libgl1-mesa-dev 
+			g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc 
+		2. curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/bin/repo 
+		3.sudo dpkg-reconfigure dash	回答no 
+		4. 安装 Sun Java 6 
+			以 jdk-6u38-linux-x64.bin 为例 
+			jdk-6u38-linux-x64.bin COPY 至 HOME 
+			cd ~ 
+			sudo cp jdk-6u38-linux-x64.bin ~/bin 
+			cd ~/bin 
+			sudo chmod a+x ~/bin/jdk-6u38-linux-x64.bin 
+ 			./jdk-6u38-linux-x64.bin 
+			sudo gedit ~/.bashrc &
+		至最后一行加上 
+			# local Envrioment 
+			export PATH=/home/$LOGNAME/bin/:$PATH 
+			#set java environment 
+			JAVA_HOME=/home/$LOGNAME/bin/jdk1.6.0_43 
+			export JRE_HOME=/home/$LOGNAME/bin/jdk1.6.0_43/jre 
+			export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH 
+			export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$PATH 
+----------------------------------------------------------------------------------------------------------------------------------
+二，熟悉ubuntu工作环境
+	1.常用快捷键： 
+		f11:全屏之间的切换
+		ctrl+shift+c = 复制 
+		ctrl+shift+v = 粘贴
+		Shift+PrintScreenSysRq = 区域截图.
+	2.压缩和解压缩：
+		压缩范例：将/etc目录下的全部文件打包成为etc.tar
+			$: tar -cvf  etc.tar  /etc       ==仅打包，不压缩！
+			$: tar -jcvf etc.tar.bz2  /etc　　 ==打包后，以 bzip2 压缩
+			$: tar -zcvf  etc.tar.gz  /etc　  ==打包后，以 gzip 压缩
+		解压范例： 将 etc.tar.gz 文件解压在usr目录下
+			$: tar -zxvf  etc.tar.gz  usr/
+		注：c 打包，x解压，t列出档案文件的内容 ，三个参数不能同时存在。
+----------------------------------------------------------------------------------------------------------------------------------
+三，常用工具的熟悉
+vim相关使用 ：官方网站：http://iccf-holland.org/click5.html
+	1.vim常用功能插件
+		代码查看工具 Ctags安装及使用，参考：  http://blog.csdn.net/duguteng/article/details/7412652
+		cscope工具安装及使用，参考：cscopehttp://blog.csdn.net/xuwedo2003/article/details/4649860 
+                强大功能参考：1.http://smilejay.com/2012/10/vim-for-linux-programmer/
+			     2.http://shenhao0129.blog.163.com/blog/static/6719244120114118403595/
+		
+	2.vim常用命令：
+		vim 里比较文件不同命令：vim -d file1 file2
+		GG：跳到文件结尾
+		gg：跳到文件开头
+
+	3..vimr服务内容
+  		 //设置空格空格，TAB，自动对齐功能 
+   		set cindent 
+   		set tabstop=4 
+   		set softtabstop=4 
+   		set shiftwidth=4 
+   		set expandtab 
+
+   		set nobackup 
+   		set noswapfile 
+ 
+ 		 //设置tags路径 
+   		set tags=tags; 
+   		set autochdir 
+
+		 //增加gb编码，支持window下中文显示 
+   		let &termencoding=&encoding 
+   		set fileencodings=utf-8,gbk 
+
+git常用功能
+	1.代码同步到github 
+		1.建立本地仓库 git init 
+		2.添加模块到暂存区 git add 
+		3.申请gtihub账户名并创建工作区 
+		4.同步github服务端文件 git pull http//:-- 
+		5.将本地仓库文件上传到github工作区 git push http//:-- 
+
+	2.代码提交
+   		查看状态：git status . 
+    		暂存代码：git add 
+   		提交代码： git commit  
+    		合并到上次提交：git commit --amend 
+    		查看服务器提交历史：git log -2 
+		查看本地提交历史： git reflog
+   		看所以分支：git branch -a 
+    		同步代码到服务端git  push caf HEAD:refs/for/msm8916-113508 
+                *git push出现unpack failed: error Missing tree错误的解决方法：
+			git push --no-thin  HEAD:refs/for/branchname
+
+
+	3.分支的合并与创建 
+       	取消修改文件：git checkout -- <file> 
+      		取消暂存文件：git reset HEAD <file> 
+      		修改最近提交：git commit --amend    也可以修改文件，然后再次提交 
+       	查看所有分支：git branch -a 
+       	新建分支：git branch iss53 
+       	切换到改分支：git checkout iss53 
+       	查看已经合并分支：git branch --merged 
+       	查看未合并分支：git branch --no-merged 
+       	新建并切换到该分支：git checkout -b iss53 
+       	回到主分支：git checkout master 
+       	合并分支：git merge  iss53 
+       	合并后删除分支：git branch -d iss53 
+       	未合并后删除分支：git branch -D iss53 
+       	把另一个本地分支的commit修改应用到当前分支: git cherry-pick <commit id> 
+      		撤销提交，退回到暂存区：git reset   <id> 
+       	撤消该commit，作为一个新的commit：git revert <commit log string> 
+       	将显示信息输出保存git show > ~/Desktop/gdf.patch 
+        显示修改文件：git show --stat <ID>
+
+	4.repo代码同步 
+          	与服务器同步：repo sync ./  
+                  注:但这会把本地的文件覆盖，只留下服务器上的代码，如果要同步但保留本地文件，可以用
+		git pull  
+ ----------------------------------------------------------------------------------------------------------------------------------
+四，手机调试
+	1.编译步骤： 
+        	1.source build/envsetup.sh 
+       	2.lunch 
+		3.配置内核：sudo make menuconfig 
+				–-----M是编译成可以随时加入的模块，*是编译进入内核，空就是不要 
+        	3.make bootimage -jn
+
+	2.调试步骤：
+		1.测试与手机的连接： lsusb
+		2.切换到root状态：按音量下键+电源键 = boot 状态，或是adb reboot bootloader   
+		3.烧写boot: fastboot flash boot out/target/product/HL6180W/boot.img 
+		4.重启：fastboot reboot 
+		5.拔掉usb测试,测试密码：*#8702# 
+
+五，驱动代码阅读记录
+----------------------------------------------------------------------------------------------------------------------------------
+	1.相关数据结构： 
+		1.ssize_t:根据处理器不同，32位为;unsigned int ,64位为unsigned long 
+		2.原子变量：atomic_t，某些处理器上这些操作会有限制，此变量不能记录大于24的整数 
+		3.读写自旋锁:rwlock_t ,一次只能有一个写者，可以有多个读者 
+		4.struct input_dev：相关分析http://blog.csdn.net/string19820108/article/details/7236808 
+
+	2. 相关宏定义： 
+		#pragma pack(1) 制定1字节对齐 
+		#pragma pack()  恢复默认对齐方式
+
+	2.相关函数： 
+		1.#define container_of（，，）
+			根据一个结构体变量中的一个域成员变量的指针来获取指向整个结构体变量的指针
+			相关分析:http://www.cnblogs.com/sdphome/archive/2011/09/14/2176624.html 
+         	2.input_report_abs(st480->input_dev, ABS_Z, mag.mag_z)：报告同步事件 
+         	3.input_sync(st480->input_dev);用来告诉上层，本次的事件已经完成了. 
+         	4.schedule_delayed_work(&st480->work, msecs_to_jiffies(st480->poll_interval))
+			相关分析: http://blog.csdn.net/dedlous/article/details/21529425 
+	 	5.ioctl是设备驱动程序中对设备的I/O通道进行管理的函数：
+			相关分析: http://blog.csdn.net/shanshanpt/article/details/19897897 
+
+		6.copy_from_user从用户空间拷贝数据到内核空间，失败返回没有拷贝的字节数，成功返回0
+			相关分析 :http://blog.csdn.net/ying_seven/article/details/6959738 
+   
+	4.相关知识： 
+		1.设备树：基本上就是画一棵电路板上CPU-总线-设备组成的树，Bootloader会将这棵树传递给内核，然后内核可以识别这棵树 
+                 		参考：http://blog.csdn.net/21cnbao/article/details/8457546 
+		2.regulator ：是驱动中电源管理的基础设施，要先注册到内核中，然后使用这些电压输出的模块
+				get其 regulator,在驱动中的init里，在适当时间中进行电压电流的设置. 
+          			参考：http://blog.csdn.net/allen6268198/article/details/7357232 
+		3.IS_ERR： 内核是返回其错误值，内核返回的指针一般是指向页面的边界(4K边界) 
+			 	具体代码查看：/kernel/driver/regulator/core.c 
+				参考：1.http://blog.csdn.net/xxu0123456789/article/details/6339625  
+----------------------------------------------------------------------------------------------------------------------------------
+6.安卓参考：
+	1 .Android设备树状结构
+	    Android 设备的树状结构,比如<Android device tree root>, 展开如下所示:
+		|--build/ – Build 环境建立和 makefiles 生成
+		|--bionic/ – Android C 库
+		|--dalvik/ – Android Java 虚拟机
+		|--kernel/ – Linux 内核
+		|--framework/ – Android 平台层 (系统库和 Java 部件)
+		|--system/ – Android 系统 (应用程序和库, fastboot, logcat, liblog)
+		|--external/ –Android 所需的非 Android 开源项目
+		|--prebuilt/ – 构建 Android 之前编译好的二进制文件,比如,cross-compilers
+		|--packages/ – 标准的 Android Java 应用和部件
+		|--development/ – 开发所需 Android 参考程序和工具
+		|--hardware/ – 硬件抽象层 (音频,感应器)和高通专属硬件包
+		|--vendor/qcom/ – 高通特定目标设备定义,比如, e.g., msm7201a_surf
+		|--vendor/qcom-proprietary – 高通所有的部件,例如, MM, QCRIL, 等等
+		|--out/ – 用户创建的 built 文件
+			|--out/host/ – Android build 生成的主机可执行文件
+			|--out/target/product/<product> – 目标文件
+				|--appsboot*.mbn – 应用 boot loader
+				|--boot.img – Android 开机画面 (Linux 内核 + root FS)
+				|--system.img – Android 部件 (/system)
+				|--userdata.img – Android 开发应用程序和数据库
+				|--root/ – Root FS 文件夹,编译后成成 ramdisk.img 文件并合并到 boot.img 文件中。
+				|--system/ – 系统 FS 文件夹, 编译生成 system.img 文件。
+				|--obj/ – 中间对象文件。
+					•从部件编译的 include 文件
+					• lib/
+					• STATIC_LIBRARIES/
+					• SHARED_LIBRARIES/
+					 • EXECUTABLES/
+					• APPS/
+
+		|--symbols/ – 所有目标二进制文件符号
+	2 .Android目标树结构
+	    Android 目标树结构如下所示:
+		/ – 根文件夹 (ramdisk.img,只读)
+			|--init.rc – 初始配置文件 (设备配置,服务启动) init.qcom.rc
+			|--dev/ – 设备节点
+			|--proc/ – 进程信息
+			|--sys/ – 系统/内核配置
+			|--sbin/ – 系统启动二进制文件 (ADB 守护进程;只读)
+			|--system/ – 来自 system.img (读-写)
+				|--bin/ – Android 系统二进制文件
+				|--lib/ – Android 系统库
+				|--xbin/ – 非必须二进制文件
+				|--framework/ – Android 框架部件 (Java)
+				|--app/ – Android 应用(Java)
+				|--etc/ – Android 配置文件
+			|--sdcard/ – SD 卡挂载点
+			|--data/ – 来自 userdata.img (读-写)
+				|--app/ – 用户安装的 Android 应用
+				|--tombstones/ – Android 崩溃日志
+
+
+
+git 如何撤销提交
+
+
